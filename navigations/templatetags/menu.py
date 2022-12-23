@@ -9,6 +9,5 @@ def draw_menu(value):
 
 @register.inclusion_tag('tags/results.html')
 def show_results(poll):
-    print(poll)
     choices = poll
     return {'choices': choices}
