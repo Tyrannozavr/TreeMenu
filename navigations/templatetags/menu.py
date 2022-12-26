@@ -4,6 +4,7 @@ register = template.Library()
 
 @register.inclusion_tag('tags/menu.html')
 def draw_menu(value):
+    print(value, type(value))
     return {'value': value}
 
 @register.inclusion_tag('tags/results.html')
@@ -12,28 +13,17 @@ def show_results(poll):
 
 @register.tag()
 def shownodes(parser, token):
-    nodelist = parser.parse(("endshownodes",))
+    print('parser', parser, ': ', token)
     parser.delete_first_token()
-    return ShowNodesNode(token, nodelist)
+    return ShowNodesNode(token)
 
 class ShowNodesNode(template.Node):
-    def __init__(self, token, nodelist):
+    def __init__(self, token):
         self.token = token
-        self.nodelist = nodelist
 
     def render(self, context):
-        result = [
-            "<ul><li>Token info:</li><ul>",
-        ]
-
+        content = []
         for part in self.token.split_contents():
-            content = str(part)
-            result.append(f"<li>{content}</li>")
-
-        result.append("</ul><li>Block contents:</li><ul>")
-        for node in self.nodelist:
-            content = str(node)
-            result.append(f"<li>{content}</li>")
-
-        result.append("</ul>")
-        return "".join(result)
+            part = str(part)
+            content.append('<li>'+part+'</li>')
+        return "<ul>"+"".join(content)+"</ul>"

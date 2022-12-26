@@ -7,12 +7,13 @@
 </head>
 <body>
 {% load tools %}
-Type {{ name }} is {{ name|get_type }}
+{#Type {{ name }} is {{ name|get_type }}#}
 {% draw_menu name %}
 
-{% shownodes "pointy face" "stubby tail"%}
-    hello world bla bla bla
-{% endshownodes %}
+{#Я сюда передам просто id нужного мне узла, а данные буду выбирать из базы данных, гениально#}
+{% shownodes  %}
+{#    test#}
+{#{% endshownodes %}#}
 
 </body>
 </html>
