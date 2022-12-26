@@ -4,8 +4,7 @@ register = template.Library()
 
 @register.inclusion_tag('tags/menu.html')
 def draw_menu(value):
-    return value.capitalize()
-
+    return {'value': value}
 
 @register.inclusion_tag('tags/results.html')
 def show_results(poll):

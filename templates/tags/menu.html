@@ -1,3 +1,15 @@
-<div>
-    <h3>Hello great</h3><h1>{{ name }}</h1>
-</div>
+{#<div>#}
+{#    <h3>Hello great</h3><h1>{{ value }}</h1>#}
+{#</div>#}
+{#{% load util %}#}
+{#{% if value|get_type == 'list' %}#}
+{#    list#}
+{#{% endif %}#}
+{#{% load tools %}#}
+{#Type {{ value }} is {{ value.get_type }}#}
+{% load tools %}
+<ul>
+    {% for item in value %}
+        <li>{{ item }}</li>
+    {% endfor %}
+</ul>

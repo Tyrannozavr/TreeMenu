@@ -6,9 +6,12 @@
     <title>Index</title>
 </head>
 <body>
-    <div>Hello</div>
-    {% show_results 'cooll' %}
-{{ name }}
-    {% show_results name %}
+{% load tools %}
+Type {{ name }} is {{ name|get_type }}
+{% draw_menu name %}
+{#    <div>Hello</div>#}
+{#    {% show_results 'cooll' %}#}
+{#{{ name }}#}
+{#    {% show_results name %}#}
 </body>
 </html>
