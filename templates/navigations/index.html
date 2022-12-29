@@ -8,12 +8,11 @@
 <body>
 {% load tools %}
 {#Type {{ name }} is {{ name|get_type }}#}
-{% draw_menu name %}
+{#{% draw_menu name %}#}
 
 {#Я сюда передам просто id нужного мне узла, а данные буду выбирать из базы данных, гениально#}
-{% shownodes  %}
-{#    test#}
-{#{% endshownodes %}#}
+{#название передает вид меню, а id на странице номер страницы, #}
+{% shownodes 'name' %}
 
 </body>
 </html>
