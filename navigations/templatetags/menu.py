@@ -1,4 +1,6 @@
 from django import template
+from navigations import models
+
 
 register = template.Library()
 
@@ -15,13 +17,27 @@ def shownodes(parser, token):
     parser.delete_first_token()
     return ShowNodesNode(token)
 
+def create_tree(array, item, children=None):
+    print(item, '...', children)
+    if not item.parents:
+        parallel = list(array.filter(parents__isnull=True))
+        parallel.insert(parallel.index(item) + 1, children)
+        return parallel
 
-def create_tree(lst):
+    if not children:
+        children = list(item.children_set.all())
+    parallel = list(item.parents.children_set.all())
+    parallel.insert(parallel.index(item) + 1, children)
+    print(children)
+    array = create_tree(array, item.parents, parallel)
+    return array
+
+def create_menu(lst):
     answer = []
     answer.append('<ul>')
     for i in lst:
         if type(i) is list:
-            answer.append(create_tree(i))
+            answer.append(create_menu(i))
         else:
             answer.append('<li>'+str(i)+'</li>')
     answer.append('</ul>')
@@ -32,6 +48,9 @@ class ShowNodesNode(template.Node):
         self.token = token
 
     def render(self, context):
-        lst = [1, 2, [12, 13, 14], [15, 16, [22, 33]], 3]
-        menu = create_tree(lst)
+        array = models.Item.objects.filter(menu=models.Menu.objects.first())
+        item = array.get(name='1.1.11')
+        lst = create_tree(array, item)
+        print(lst)
+        menu = create_menu(lst)
         return menu
