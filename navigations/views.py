@@ -3,22 +3,33 @@ from .models import Menu, Item
 
 # def get_parents()
 
-def get_tree(array, item):
-    # print(array, item, 'par', item.parents)
-    # print(bool(item.parents))
-    if item.parents:
-        new_array = list(item.parents.children_set.all())
-        middle = get_tree(array, item.parents)
+# def get_tree(array, item):
+#     # print(array, item, 'par', item.parents)
+#     # print(bool(item.parents))
+#     if item.parents:
+#         new_array = list(item.parents.children_set.all())
+#         middle = get_tree(array, item.parents)
+#         # print(new_array, middle, item.parents)
+#         middle.insert(middle.index(item.parents)+1, new_array)
+#         new_array = middle
+#         return new_array
+#     else:
+#         new_array = list(array.filter(parents__isnull=True))
+#         return new_array
 
-        print(new_array, ':', middle, ':', item)
-        # middle.insert(middle.index(item.parents)+1, new_array)
-        # new_array.insert(new_array.index(item)+1, get_tree(array, item.parents))
+def get_tree(array, item, children=None):
+    if not item.parents:
+        parallel = list(array.filter(parents__isnull=True))
+        parallel.insert(parallel.index(item)+1, children)
+        # print(parallel, '\t', children)
+        print(parallel)
+        return parallel
 
-        return new_array
-    else:
-        new_array = list(array.filter(parents__isnull=True))
-        # print('null', new_array)
-        return new_array
+    childrens = list(item.children_set.all())
+    parallel = list(item.parents.children_set.all())
+    parallel.insert(parallel.index(item)+1, childrens)
+    get_tree(array, item.parents, parallel)
+
 
 def index(request):
     array = Item.objects.filter(menu__name='First menu')
@@ -26,8 +37,7 @@ def index(request):
     obj = array.get(name='1.1.11')
     # print(obj)
     # print('parent is', obj.parents)
-    array = get_tree(array, obj)
-    print('itog', array)
+    print('result', get_tree(array, obj))
     context = {}
     context['name'] = [list(Menu.objects.all()) for i in range(3)]
     return render(request, 'navigations/index.html', context=context)
