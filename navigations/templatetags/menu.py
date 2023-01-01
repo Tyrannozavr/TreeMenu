@@ -1,14 +1,8 @@
 from django import template
-from navigations import models
 from django.utils.safestring import mark_safe
-
+from navigations import models
 
 register = template.Library()
-
-
-@register.inclusion_tag('tags/hest.html')
-def friend(name):
-    return {'name': name}
 
 
 def create_tree(array, item, children=None):
@@ -40,9 +34,6 @@ def create_menu(lst):
 def draw_menu(menu, active_id=None):
     array = models.Item.objects.filter(menu__name=menu)
     item = array.get(id=active_id) if active_id else array.first()
-    # print(item, type(item))
-    # item = array.get(name='1')
-    # print(2, item, type(item))
     lst = create_tree(array, item)
     menu = create_menu(lst)
     return mark_safe(menu)
