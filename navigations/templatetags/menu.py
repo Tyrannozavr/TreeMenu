@@ -1,36 +1,29 @@
 from django import template
 from navigations import models
+from django.utils.safestring import mark_safe
 
 
 register = template.Library()
 
-@register.inclusion_tag('tags/menu.html')
-def draw_menu(value):
-    return {'value': value}
 
-@register.inclusion_tag('tags/results.html')
-def show_results(poll):
-    return {'choices': poll}
+@register.inclusion_tag('tags/hest.html')
+def friend(name):
+    return {'name': name}
 
-@register.tag()
-def shownodes(parser, token):
-    parser.delete_first_token()
-    return ShowNodesNode(token)
 
 def create_tree(array, item, children=None):
-    print(item, '...', children)
+    if not children:
+        children = list(item.children_set.all())
     if not item.parents:
         parallel = list(array.filter(parents__isnull=True))
         parallel.insert(parallel.index(item) + 1, children)
         return parallel
 
-    if not children:
-        children = list(item.children_set.all())
     parallel = list(item.parents.children_set.all())
     parallel.insert(parallel.index(item) + 1, children)
-    print(children)
     array = create_tree(array, item.parents, parallel)
     return array
+
 
 def create_menu(lst):
     answer = []
@@ -39,18 +32,17 @@ def create_menu(lst):
         if type(i) is list:
             answer.append(create_menu(i))
         else:
-            answer.append('<li>'+str(i)+'</li>')
+            answer.append('<li>' + f'<a href="{i.id}">{i.name}</a>' + '</li>') if i else ''
     answer.append('</ul>')
     return ''.join(answer)
 
-class ShowNodesNode(template.Node):
-    def __init__(self, token):
-        self.token = token
-
-    def render(self, context):
-        array = models.Item.objects.filter(menu=models.Menu.objects.first())
-        item = array.get(name='1.1.11')
-        lst = create_tree(array, item)
-        print(lst)
-        menu = create_menu(lst)
-        return menu
+@register.simple_tag
+def draw_menu(menu, active_id=None):
+    array = models.Item.objects.filter(menu__name=menu)
+    item = array.get(id=active_id) if active_id else array.first()
+    # print(item, type(item))
+    # item = array.get(name='1')
+    # print(2, item, type(item))
+    lst = create_tree(array, item)
+    menu = create_menu(lst)
+    return mark_safe(menu)
