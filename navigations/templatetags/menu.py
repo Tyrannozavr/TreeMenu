@@ -30,8 +30,12 @@ def create_menu(lst):
     answer.append('</ul>')
     return ''.join(answer)
 
-@register.simple_tag
-def draw_menu(menu, active_id=None):
+@register.simple_tag(takes_context=True)
+def draw_menu(context, menu_name):
+# def draw_menu(menu, active_id=None):
+    menu = 'First menu'
+    active_id = None
+    print('draw', context['request'].path, menu_name)
     array = models.Item.objects.filter(menu__name=menu)
     item = array.get(id=active_id) if active_id else array.first()
     lst = create_tree(array, item)
