@@ -6,8 +6,11 @@
     <title>Index</title>
 </head>
 <body>
-{% draw_menu 'menu' %}
-{#{% draw_menu 'First menu' id  %}#}
+<button onclick="window.location='/'">reset</button>
+<br>
+blblb {{ request.path }} {{ request.GET }}
+<a href="?helloo world blablabla=money">test</a>
+{% draw_menu 'First menu' %}
 
 </body>
 </html>
