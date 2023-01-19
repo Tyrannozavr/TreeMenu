@@ -42,6 +42,10 @@ def create_menu(lst, menu_name, context):
 def draw_menu(context, menu_name):
     request = context['request']
     active_id = request.GET.get(menu_name)
+    if not active_id:
+        lst = models.Item.objects.filter(menu__name=menu_name, parents=None)
+        menu = create_menu(lst, menu_name, context)
+        return mark_safe(menu)
     array = models.Item.objects.filter(menu__name=menu_name)
     item = array.get(id=active_id) if active_id else array.first()
     lst = create_tree(array, item)
