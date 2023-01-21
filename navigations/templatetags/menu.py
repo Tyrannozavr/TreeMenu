@@ -42,31 +42,21 @@ def create_menu(lst, menu_name, context):
     answer.append('</ul>')
     return ''.join(answer)
 
-# def test(elem):
-#     tree = elem.family_tree()
-#     tree.append(elem.id)
-#     root = list(models.Item.objects.filter(parents__isnull=True))
-#     while tree:
-#         a = tree.pop()
-#         print(a, type(a))
-#     # print(root)
-#     # print(tree)
-#     return elem
-
-
 @register.simple_tag(takes_context=True)
 def draw_menu(context, menu_name):
     request = context['request']
     active_id = request.GET.get(menu_name)
+    # print(active_id, type(active_id))
+    hierarchy = models.Item.objects.get(id=active_id).hierarchy
+    ids = list(map(int, [active_id, *hierarchy.split('.')]))
+    print(ids)
+
     if not active_id:
         lst = models.Item.objects.filter(menu__name=menu_name, parents=None)
         menu = create_menu(lst, menu_name, context)
         return mark_safe(menu)
     array = models.Item.objects.filter(menu__name=menu_name)
-    # item = array.get(id=active_id) if active_id else array.first()
     item = array.get(id=active_id)
-    # test(item)
     lst = create_tree(array, item)
-    # print(lst)
     menu_name = create_menu(lst, menu_name, context)
     return mark_safe(menu_name)
