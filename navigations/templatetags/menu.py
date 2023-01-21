@@ -53,7 +53,7 @@ def create_menu(lst, menu_name, context):
                 answer.append('<li>' + f'<a href="{url+new_arg}">{i.name}</a>' + '</li>') if i else ''
     answer.append('</ul>')
     return ''.join(answer)
-
+from django.db.models import Q
 @register.simple_tag(takes_context=True)
 def draw_menu(context, menu_name):
     request = context['request']
@@ -73,7 +73,10 @@ def draw_menu(context, menu_name):
         lst = models.Item.objects.filter(menu__name=menu_name, parents=None)
         menu = create_menu(lst, menu_name, context)
         return mark_safe(menu)
-    array = models.Item.objects.filter(menu__name=menu_name)
+
+    # (Q(creator=owner) | Q(moderated=False))
+
+    array = models.Item.objects.filter(Q(menu__name=menu_name, id__in=active_ids) | Q(parents__isnull=True))
     # array = models.Item.objects.filter(menu__name=menu_name, id__in=active_ids)
     item = array.get(id=active_id)
     lst = create_tree(array, item)
