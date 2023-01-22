@@ -24,15 +24,6 @@ class Item(models.Model):
         """
         return self.children_set.all()
 
-    # def family_tree(self):
-    #     """
-    #     :return: returns a list of parent ids up to the root element
-    #     """
-    #     if self.parents is None:
-    #         return []
-    #     else:
-    #         return self.parents.family_tree() + [self.parents.id]
-
     def parents_tree(self):
         if self.parents is not None:
             return [self.parents.id] + self.parents.parents_tree()
@@ -42,7 +33,7 @@ class Item(models.Model):
 
     def save(self, *args, **kwargs):
         tree = self.parents_tree()
-        self.hierarchy = '.'.join([str(i) for i in tree if i])
+        self.hierarchy = ':'.join([str(i) for i in tree if i])
         super(Item, self).save(*args, **kwargs)
 
 
