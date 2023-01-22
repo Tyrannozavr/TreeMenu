@@ -65,7 +65,8 @@ def draw_menu(context, menu_name):
     #     active_ids = [int(i) for i in active_ids.split(':')]
     if isinstance(active_ids, int):
         active_id = int(active_ids)
-    else:
+    elif active_ids:
+        print(menu_name, active_ids)
         active_ids = [int(i) for i in active_ids.split(':')]
         active_id = active_ids[0]
 
