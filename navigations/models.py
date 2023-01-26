@@ -14,19 +14,19 @@ class Menu(models.Model):
 class Item(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    parents = models.ForeignKey('self', related_name='children_set', on_delete=models.CASCADE, null=True, blank=True)
-    # hierarchy = models.ManyToManyField('self', null=True, blank=True, auto_created=True)
-    hierarchy = models.CharField(max_length=255, null=True, blank=True)
+    parent = models.ForeignKey('self', related_name='children_set', on_delete=models.CASCADE, null=True, blank=True)
+    hierarchy = models.CharField(max_length=255, null=True, blank=True)  # this field is required to create single query
+                                                                          # in the DB, has the form el1:el2
 
     def children(self):
         """
-        :return all children element
+        :return all children elements
         """
         return self.children_set.all()
 
     def parents_tree(self):
-        if self.parents is not None:
-            return [self.parents.id] + self.parents.parents_tree()
+        if self.parent is not None:
+            return [self.parent.id] + self.parent.parents_tree()
         else:
             return [None]
 

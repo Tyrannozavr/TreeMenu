@@ -16,14 +16,14 @@ def create_tree(array, item, children=None):
      """
     if not children:
         children = list(item.children_set.all())
-    if not item.parents:
-        parallel = list(array.filter(parents__isnull=True))
+    if not item.parent:
+        parallel = list(array.filter(parent__isnull=True))
         parallel.insert(parallel.index(item) + 1, children)
         return parallel
 
-    parallel = list(item.parents.children_set.all())
+    parallel = list(item.parent.children_set.all())
     parallel.insert(parallel.index(item) + 1, children)
-    array = create_tree(array, item.parents, parallel)
+    array = create_tree(array, item.parent, parallel)
     return array
 
 
@@ -76,12 +76,12 @@ def draw_menu(context, menu_name):
         active_ids = [int(i) for i in active_ids.split(':')]
         current_id = active_ids[0]
     else:  # and finally may don't have arguments
-        tree = Item.objects.filter(menu__name=menu_name, parents__isnull=True)
+        tree = Item.objects.filter(menu__name=menu_name, parent__isnull=True)
         menu = create_menu(tree, menu_name, request)
         return mark_safe(menu)
 
     array = Item.objects \
-        .filter(Q(menu__name=menu_name, id__in=active_ids) | Q(menu__name=menu_name, parents__isnull=True))
+        .filter(Q(menu__name=menu_name, id__in=active_ids) | Q(menu__name=menu_name, parent__isnull=True))
     current_item = array.get(id=current_id)
     tree = create_tree(array, current_item)
     menu = create_menu(tree, menu_name, request)
